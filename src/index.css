@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+@config '../tailwind.config.ts';
+
+body {
+  margin: 0;
+  background: #f4f5f7;
+  color: #111827;
+  font-family: 'Sora', sans-serif;
+  color-scheme: light;
+}
+
+#root {
+  min-width: 1280px;
+}
