@@ -288,7 +288,7 @@ export const supabase = createClient(
 **Título e marca:** "Naja Soluções | IA Usage" no Header, com a logo (`public/logo-naja.png`) em um container arredondado `bg-naja-50`.
 **Tipografia:** `IBM Plex Mono` para números (Google Fonts), `Sora` para texto geral.
 **KPI cards:** número em destaque, rótulo abaixo, ícone contextual (alternando acento laranja/azul).
-**Responsividade:** 1280px+. Mobile não é prioridade — uso interno em desktop.
+**Responsividade:** mobile-first com Tailwind (`sm`/`md`/`xl`). Header e FilterBar empilham verticalmente abaixo de `sm`. KpiGrid vai de 1 coluna (mobile) a 6 (`xl`+). UsageTable troca para lista de cards empilhados abaixo de `md`; a tabela tradicional aparece em `md`+. SuccessRateChart reduz raio e simplifica o label (só percentual) abaixo de 640px via hook `useIsMobile`.
 **Polling:** atualização automática a cada 60s. Timestamp "Atualizado às HH:mm:ss" no Header com botão de refresh manual.
 
 ---

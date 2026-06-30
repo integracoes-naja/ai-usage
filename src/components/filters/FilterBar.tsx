@@ -32,7 +32,7 @@ export function FilterBar({ filters, setDateRange, setWorkflow }: FilterBarProps
   }, []);
 
   return (
-    <div className="flex flex-wrap items-end gap-4 rounded-xl border border-gray-200 bg-card p-4 shadow-sm">
+    <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-card p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end">
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted" htmlFor="start-date">
           Data inicial
@@ -40,7 +40,7 @@ export function FilterBar({ filters, setDateRange, setWorkflow }: FilterBarProps
         <input
           id="start-date"
           type="date"
-          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 font-mono text-sm text-ink focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 font-mono text-sm text-ink focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:w-auto"
           value={format(filters.startDate, 'yyyy-MM-dd')}
           onChange={(e) => setDateRange(new Date(e.target.value), filters.endDate)}
         />
@@ -53,7 +53,7 @@ export function FilterBar({ filters, setDateRange, setWorkflow }: FilterBarProps
         <input
           id="end-date"
           type="date"
-          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 font-mono text-sm text-ink focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 font-mono text-sm text-ink focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:w-auto"
           value={format(filters.endDate, 'yyyy-MM-dd')}
           onChange={(e) => setDateRange(filters.startDate, new Date(e.target.value))}
         />
@@ -65,7 +65,7 @@ export function FilterBar({ filters, setDateRange, setWorkflow }: FilterBarProps
         </label>
         <select
           id="workflow"
-          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-ink focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-ink focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:w-auto"
           value={filters.workflow ?? ''}
           onChange={(e) => setWorkflow(e.target.value || null)}
         >

@@ -45,7 +45,7 @@ function App() {
     <div className="min-h-screen bg-bg text-ink">
       <Header lastUpdated={lastUpdated} onRefresh={handleRefresh} />
 
-      <main className="flex flex-col gap-6 px-6 py-6">
+      <main className="flex flex-col gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
         <FilterBar filters={filters} setDateRange={setDateRange} setWorkflow={setWorkflow} />
 
         <KpiGrid metrics={metrics} loading={metricsLoading} />
