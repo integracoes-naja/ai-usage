@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react';
 import { format } from 'date-fns';
+import { MetricInfo } from '../common/MetricInfo';
 import type { AiUsageLog } from '../../types';
 
 interface UsageTableProps {
@@ -30,14 +31,53 @@ function ExpandedDetail({ row }: { row: AiUsageLog }) {
 function StatusBadge({ success }: { success: boolean }) {
   return (
     <span
-      className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ${
         success ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
       }`}
     >
+      <span className={`h-1.5 w-1.5 rounded-full ${success ? 'bg-emerald-500' : 'bg-red-500'}`} />
       {success ? 'Sucesso' : 'Falha'}
     </span>
   );
 }
+
+function ExpandChevron({ expanded }: { expanded: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      className={`h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-200 ${
+        expanded ? 'rotate-90' : ''
+      }`}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+function TableSkeleton() {
+  return (
+    <div className="divide-y divide-gray-100 p-4">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-4 py-3">
+          <span className="skeleton-shimmer h-3 w-24 animate-shimmer rounded" />
+          <span className="skeleton-shimmer h-3 w-32 animate-shimmer rounded" />
+          <span className="skeleton-shimmer ml-auto h-3 w-16 animate-shimmer rounded" />
+          <span className="skeleton-shimmer h-5 w-16 animate-shimmer rounded-full" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const tableIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path strokeLinecap="round" d="M3 9h18M8 13h2M8 17h5" />
+  </svg>
+);
 
 function Pagination({
   page,
@@ -51,26 +91,32 @@ function Pagination({
   count: number;
 }) {
   return (
-    <div className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-      <span>
+    <div className="flex flex-col gap-3 border-t border-gray-200 bg-bg/60 px-4 py-3 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+      <span className="font-mono text-xs sm:text-sm">
         Página {page + 1} de {totalPages} · {numberFormatter.format(count)} registros
       </span>
       <div className="flex gap-2">
         <button
           type="button"
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-1 text-ink transition-colors hover:border-blue-400 hover:text-blue-600 disabled:opacity-40 disabled:hover:border-gray-300 disabled:hover:text-ink sm:flex-none"
+          className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-ink transition-colors hover:border-naja-400 hover:text-naja-600 disabled:opacity-40 disabled:hover:border-gray-300 disabled:hover:text-ink sm:flex-none"
           disabled={page === 0}
           onClick={() => setPage(page - 1)}
         >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 6l-6 6 6 6" />
+          </svg>
           Anterior
         </button>
         <button
           type="button"
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-1 text-ink transition-colors hover:border-blue-400 hover:text-blue-600 disabled:opacity-40 disabled:hover:border-gray-300 disabled:hover:text-ink sm:flex-none"
+          className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-ink transition-colors hover:border-naja-400 hover:text-naja-600 disabled:opacity-40 disabled:hover:border-gray-300 disabled:hover:text-ink sm:flex-none"
           disabled={page + 1 >= totalPages}
           onClick={() => setPage(page + 1)}
         >
           Próxima
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 6l6 6-6 6" />
+          </svg>
         </button>
       </div>
     </div>
@@ -81,53 +127,70 @@ export function UsageTable({ rows, count, page, setPage, pageSize, loading }: Us
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const totalPages = Math.max(1, Math.ceil(count / pageSize));
 
-  if (loading) {
-    return (
-      <div className="rounded-xl border border-gray-200 bg-card p-6 text-center text-muted shadow-sm">
-        Carregando…
-      </div>
-    );
-  }
-
-  if (rows.length === 0) {
-    return (
-      <div className="rounded-xl border border-gray-200 bg-card p-6 text-center text-muted shadow-sm">
-        Nenhum registro encontrado
-      </div>
-    );
-  }
-
   return (
-    <div className="rounded-xl border border-gray-200 bg-card shadow-sm">
+    <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-card shadow-panel">
+      <span className="absolute inset-x-0 top-0 h-0.5 bg-naja-500" />
+      <div className="flex items-center gap-2.5 border-b border-gray-100 p-4">
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-naja-50 text-naja-600">
+          {tableIcon}
+        </div>
+        <h3 className="text-sm font-semibold text-ink">Tabela de Detalhamento</h3>
+        <MetricInfo
+          whatItShows="Log bruto de cada chamada individual, com tokens, custo e status."
+          howToInterpret="Use para auditoria pontual ou para investigar um erro específico apontado em outro dashboard."
+        />
+      </div>
+
+      {loading ? (
+        <TableSkeleton />
+      ) : rows.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 p-10 text-center text-muted">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-9 w-9 opacity-40">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <path strokeLinecap="round" d="M3 9h18M8 13h2M8 17h5" />
+          </svg>
+          <p className="text-sm">Nenhum registro encontrado para os filtros selecionados</p>
+        </div>
+      ) : (
+        <>
       {/* Tabela: telas md+ */}
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-xs uppercase tracking-wide text-muted">
-              <th className="px-4 py-3 font-medium">Data</th>
-              <th className="px-4 py-3 font-medium">Workflow</th>
-              <th className="px-4 py-3 font-medium">Node</th>
-              <th className="px-4 py-3 font-medium">Modelo</th>
-              <th className="px-4 py-3 text-right font-medium">Input</th>
-              <th className="px-4 py-3 text-right font-medium">Output</th>
-              <th className="px-4 py-3 text-right font-medium">Total</th>
-              <th className="px-4 py-3 text-right font-medium">Custo</th>
-              <th className="px-4 py-3 font-medium">Status</th>
+            <tr className="border-b border-gray-200 bg-bg/70 text-[11px] uppercase tracking-wide text-muted">
+              <th className="px-4 py-3 font-semibold">Data</th>
+              <th className="px-4 py-3 font-semibold">Workflow</th>
+              <th className="px-4 py-3 font-semibold">Node</th>
+              <th className="px-4 py-3 font-semibold">Modelo</th>
+              <th className="px-4 py-3 text-right font-semibold">Input</th>
+              <th className="px-4 py-3 text-right font-semibold">Output</th>
+              <th className="px-4 py-3 text-right font-semibold">Total</th>
+              <th className="px-4 py-3 text-right font-semibold">Custo</th>
+              <th className="px-4 py-3 font-semibold">Status</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => {
+            {rows.map((row, i) => {
               const isExpandable = !!row.error_message || !!row.metadata;
               const isExpanded = expandedId === row.id;
 
               return (
                 <Fragment key={row.id}>
                   <tr
-                    className={`border-b border-gray-100 ${isExpandable ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+                    className={`border-b border-gray-100 transition-colors ${i % 2 === 1 ? 'bg-gray-50/40' : ''} ${
+                      isExpandable ? 'cursor-pointer hover:bg-naja-50/40' : ''
+                    }`}
                     onClick={() => isExpandable && setExpandedId(isExpanded ? null : row.id)}
                   >
                     <td className="px-4 py-2 font-mono text-xs text-muted">
-                      {format(new Date(row.created_at), 'dd/MM/yyyy HH:mm')}
+                      <div className="flex items-center gap-1.5">
+                        {isExpandable ? (
+                          <ExpandChevron expanded={isExpanded} />
+                        ) : (
+                          <span className="inline-block w-3.5" />
+                        )}
+                        {format(new Date(row.created_at), 'dd/MM/yyyy HH:mm')}
+                      </div>
                     </td>
                     <td className="px-4 py-2 text-ink">{row.workflow_name}</td>
                     <td className="px-4 py-2 text-ink">{row.node_name}</td>
@@ -136,16 +199,16 @@ export function UsageTable({ rows, count, page, setPage, pageSize, loading }: Us
                         {row.model}
                       </span>
                     </td>
-                    <td className="px-4 py-2 text-right font-mono text-xs text-muted">
+                    <td className="px-4 py-2 text-right font-mono text-xs tabular-nums text-muted">
                       {numberFormatter.format(row.input_tokens)}
                     </td>
-                    <td className="px-4 py-2 text-right font-mono text-xs text-muted">
+                    <td className="px-4 py-2 text-right font-mono text-xs tabular-nums text-muted">
                       {numberFormatter.format(row.output_tokens)}
                     </td>
-                    <td className="px-4 py-2 text-right font-mono text-xs text-muted">
+                    <td className="px-4 py-2 text-right font-mono text-xs tabular-nums text-muted">
                       {numberFormatter.format(row.total_tokens)}
                     </td>
-                    <td className="px-4 py-2 text-right font-mono text-xs text-ink">
+                    <td className="px-4 py-2 text-right font-mono text-xs tabular-nums text-ink">
                       $ {row.cost_usd.toFixed(6)}
                     </td>
                     <td className="px-4 py-2">
@@ -179,9 +242,16 @@ export function UsageTable({ rows, count, page, setPage, pageSize, loading }: Us
               onClick={() => isExpandable && setExpandedId(isExpanded ? null : row.id)}
             >
               <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="truncate font-medium text-ink">{row.workflow_name}</p>
-                  <p className="truncate text-xs text-muted">{row.node_name}</p>
+                <div className="flex min-w-0 items-start gap-1.5">
+                  {isExpandable && (
+                    <span className="mt-1">
+                      <ExpandChevron expanded={isExpanded} />
+                    </span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-ink">{row.workflow_name}</p>
+                    <p className="truncate text-xs text-muted">{row.node_name}</p>
+                  </div>
                 </div>
                 <StatusBadge success={row.success} />
               </div>
@@ -226,6 +296,8 @@ export function UsageTable({ rows, count, page, setPage, pageSize, loading }: Us
       </div>
 
       <Pagination page={page} setPage={setPage} totalPages={totalPages} count={count} />
+        </>
+      )}
     </div>
   );
 }

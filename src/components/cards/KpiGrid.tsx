@@ -53,6 +53,7 @@ export function KpiGrid({ metrics, loading }: KpiGridProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
       <KpiCard
+        index={0}
         label="Custo Total"
         value={metrics ? formatUsd(metrics.totalCost) : '—'}
         icon={icons.cost}
@@ -60,6 +61,7 @@ export function KpiGrid({ metrics, loading }: KpiGridProps) {
         accent="orange"
       />
       <KpiCard
+        index={1}
         label="Total de Chamadas"
         value={metrics ? numberFormatter.format(metrics.totalCalls) : '—'}
         icon={icons.calls}
@@ -67,6 +69,7 @@ export function KpiGrid({ metrics, loading }: KpiGridProps) {
         accent="blue"
       />
       <KpiCard
+        index={2}
         label="Taxa de Sucesso"
         value={metrics ? `${metrics.successRate.toFixed(1)}%` : '—'}
         icon={icons.success}
@@ -74,6 +77,7 @@ export function KpiGrid({ metrics, loading }: KpiGridProps) {
         accent="orange"
       />
       <KpiCard
+        index={3}
         label="Tokens Consumidos"
         value={metrics ? numberFormatter.format(metrics.totalTokens) : '—'}
         icon={icons.tokens}
@@ -81,6 +85,7 @@ export function KpiGrid({ metrics, loading }: KpiGridProps) {
         accent="blue"
       />
       <KpiCard
+        index={4}
         label="Custo Médio / Chamada"
         value={metrics ? formatUsd(metrics.avgCostPerCall) : '—'}
         icon={icons.avgCost}
@@ -88,6 +93,7 @@ export function KpiGrid({ metrics, loading }: KpiGridProps) {
         accent="orange"
       />
       <KpiCard
+        index={5}
         label="Workflows Ativos"
         value={metrics ? numberFormatter.format(metrics.activeWorkflows) : '—'}
         icon={icons.workflows}

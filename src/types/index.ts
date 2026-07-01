@@ -47,3 +47,52 @@ export interface SuccessRatePoint {
   name: string;
   value: number;
 }
+
+export interface CostByWorkflowPoint {
+  workflow_name: string;
+  custo_total: number;
+}
+
+export interface AvgCostByWorkflowPoint {
+  workflow_name: string;
+  custo_medio_execucao: number;
+  total_execucoes: number;
+}
+
+export interface CostPer1kTokensPoint {
+  model: string;
+  custo_por_1k_tokens: number;
+}
+
+export interface ErrorsByWorkflowPoint {
+  workflow_name: string;
+  total_erros: number;
+}
+
+export interface ErrorMessageRow {
+  workflow_name: string;
+  error_message: string;
+  ocorrencias: number;
+  ultima_ocorrencia: string;
+}
+
+export interface RunRate {
+  custoAcumulado: number;
+  projecao: number;
+  custoMesAnterior: number;
+  variacaoPct: number | null;
+}
+
+export interface WorkflowComparisonRow {
+  workflow_id: string;
+  workflow_name: string;
+  total_execucoes: number;
+  custo_total: number;
+  custo_medio_execucao: number;
+  tokens_medio: number;
+  custo_por_1k_tokens: number;
+  taxa_sucesso: number;
+  modelos_usados: string[];
+  ultima_execucao: string;
+  tendencia7dPct: number | null;
+}
