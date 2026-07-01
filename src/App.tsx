@@ -22,14 +22,14 @@ import { WorkflowComparisonTable } from './components/table/WorkflowComparisonTa
 const POLL_INTERVAL_MS = 60_000;
 
 function App() {
-  const { filters, setDateRange, setWorkflow } = useFilters();
+  const { filters, setDateRange, setWorkflows } = useFilters();
   const [page, setPage] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
   useEffect(() => {
     setPage(0);
-  }, [filters.startDate, filters.endDate, filters.workflow]);
+  }, [filters.startDate, filters.endDate, filters.workflows]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -76,7 +76,7 @@ function App() {
         <Header lastUpdated={lastUpdated} onRefresh={handleRefresh} />
 
         <main className="flex flex-col gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
-          <FilterBar filters={filters} setDateRange={setDateRange} setWorkflow={setWorkflow} />
+          <FilterBar filters={filters} setDateRange={setDateRange} setWorkflows={setWorkflows} />
 
           <KpiGrid metrics={metrics} loading={metricsLoading} />
 

@@ -38,8 +38,8 @@ export function useMetrics(filters: Filters, refreshKey: number) {
         .gte('created_at', filters.startDate.toISOString())
         .lte('created_at', filters.endDate.toISOString());
 
-      if (filters.workflow) {
-        query = query.eq('workflow_name', filters.workflow);
+      if (filters.workflows.length > 0) {
+        query = query.in('workflow_name', filters.workflows);
       }
 
       const { data, error } = await query;
@@ -61,7 +61,7 @@ export function useMetrics(filters: Filters, refreshKey: number) {
     return () => {
       cancelled = true;
     };
-  }, [filters.startDate, filters.endDate, filters.workflow, refreshKey]);
+  }, [filters.startDate, filters.endDate, filters.workflows, refreshKey]);
 
   return { metrics, loading };
 }

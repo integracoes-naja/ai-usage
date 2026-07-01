@@ -24,8 +24,8 @@ export function useUsageLog(filters: Filters, page: number, refreshKey: number) 
         .order('created_at', { ascending: false })
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
-      if (filters.workflow) {
-        query = query.eq('workflow_name', filters.workflow);
+      if (filters.workflows.length > 0) {
+        query = query.in('workflow_name', filters.workflows);
       }
 
       const { data, count: total, error } = await query;
@@ -49,7 +49,7 @@ export function useUsageLog(filters: Filters, page: number, refreshKey: number) 
     return () => {
       cancelled = true;
     };
-  }, [filters.startDate, filters.endDate, filters.workflow, page, refreshKey]);
+  }, [filters.startDate, filters.endDate, filters.workflows, page, refreshKey]);
 
   return { rows, count, loading, pageSize: PAGE_SIZE };
 }

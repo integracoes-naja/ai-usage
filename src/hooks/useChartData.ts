@@ -184,8 +184,8 @@ export function useChartData(filters: Filters, refreshKey: number) {
         .gte('created_at', filters.startDate.toISOString())
         .lte('created_at', filters.endDate.toISOString());
 
-      if (filters.workflow) {
-        query = query.eq('workflow_name', filters.workflow);
+      if (filters.workflows.length > 0) {
+        query = query.in('workflow_name', filters.workflows);
       }
 
       const { data, error } = await query;
@@ -205,10 +205,10 @@ export function useChartData(filters: Filters, refreshKey: number) {
       } else {
         const rows = (data ?? []) as ChartRow[];
         const failedRows = rows.filter((r) => !r.success);
-        // Quando nenhum workflow específico está selecionado ("Todos"), separa o
-        // custo por dia em uma linha por workflow; com um workflow filtrado, uma
-        // linha por workflow seria redundante (só haveria uma série), então agrega.
-        setCostByDay(buildCostByDay(rows, !filters.workflow));
+        // Com "Todos" ou múltiplos workflows selecionados, separa o custo por dia
+        // em uma linha por workflow; com exatamente um selecionado isso seria
+        // redundante (só haveria uma série), então agrega em uma linha só.
+        setCostByDay(buildCostByDay(rows, filters.workflows.length !== 1));
         setTokensByModel(buildTokensByModel(rows));
         setSuccessRate(buildSuccessRate(rows));
         setCostByWorkflow(buildCostByWorkflow(rows));
@@ -226,7 +226,7 @@ export function useChartData(filters: Filters, refreshKey: number) {
     return () => {
       cancelled = true;
     };
-  }, [filters.startDate, filters.endDate, filters.workflow, refreshKey]);
+  }, [filters.startDate, filters.endDate, filters.workflows, refreshKey]);
 
   return {
     costByDay,
